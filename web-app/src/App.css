@@ -30,3 +30,7 @@ th {
   background-color: #4CAF50;
   color: white;
 }
+
+input {
+  padding: 7px;
+}

@@ -5,7 +5,7 @@ class Employee_model extends CI_Model {
     private $table = "employees";
 
     public function get_all() {
-        $query = $this->db->order_by("id", "DESC")->get($this->table);
+        $query = $this->db->limit(10)->order_by("id", "DESC")->get($this->table);
         
         if ($query) {
             return $query->result();

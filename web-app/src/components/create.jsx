@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import axios from "axios";
 
 class Create extends React.Component {
 
@@ -10,33 +11,42 @@ class Create extends React.Component {
             name: '',
             email: '',
             mobile: '',
-            address: ''
+            address: '',
+            selectedFile : null
         };
     }
     
+    redirect() {
+        this.props.history.push('/')
+    }
+        
     changeHandler = (e) => {
         this.setState({
             [e.target.name] : e.target.value
         })
     }
 
+    fileSelect = (e) => {
+        this.setState({selectedFile: e.target.files[0]})
+    }
+
     submitHandler = (e) => {
         e.preventDefault();
-        fetch(this.state.apiUrl + "api/employee", {
-            method: 'POST',
-            body: JSON.stringify({
-                name: this.state.name,
-                email: this.state.email,
-                mobile: this.state.mobile,
-                address: this.state.address
-            }),
-                        
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
+        const formData = new FormData();
+            formData.append('name', this.state.name);
+            formData.append('email', this.state.email);
+            formData.append('mobile', this.state.mobile);
+            formData.append('address', this.state.address);
+            
+            if(this.state.selectedFile !=null) {
+                formData.append('image', this.state.selectedFile, this.state.selectedFile.name);
             }
-        }).then(response => {
+        
+            axios.post(this.state.apiUrl + 'api/employee', formData
+            ).then(response => {
             if (response.status === 200) {
                 alert("New record saved successfully");
+                this.redirect(); // Go to home page
             }
         });
     }
@@ -63,6 +73,10 @@ class Create extends React.Component {
                             <tr>
                                 <td><label>Address:</label></td>
                                 <td><input type="text" name="address" value={this.state.address} onChange={this.changeHandler} placeholder="Address..." /></td>
+                            </tr>
+                            <tr>
+                                <td><label>Photo:</label></td>
+                                <td> <input type="file" onChange = {this.fileSelect} /> </td>
                             </tr>
                             <tr>
                                 <td>&nbsp;</td>
